@@ -1,0 +1,16 @@
+{
+	"name": "mountable",
+	"author": "Guilherme Augusto Madaleno",
+	"version": "1.0.0",
+	"main": "mountable.js",
+	"ignore":
+	[
+		"**/.*",
+		"*.md",
+		"bower.json"
+	],
+	"dependencies":
+	{
+		"jquery": "~2.x"
+	}
+}

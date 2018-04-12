@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+		<title>mountable.js</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<style>
+			.table {margin-bottom: 0;}
+		</style>
+
+	</head>
+
+	<body>
+
+		<div class="container">
+
+			<h1>TableCreator</h1>
+			
+
+			<hr>
+
+			<!-- Example table two -->
+
+			<h3>A quite simple example</h3>
+			<h4>The result</h4>
+			<div class="well">
+				<form action="#">
+					<table class="table" id="example1">
+						<thead>
+							<tr id="tableHead">
+								<th>Time</th>		
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="tableBody">
+								<td><input type="text" name="Time[]" class="form-control"></td>
+								<!--<td><select name="Position[]" class="form-control posSel"></select></td>-->
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3">
+								<button type="button" class="btn btn-default" id="button2" onclick="">Add a new line</button>
+								<button type="button" class="btn btn-default" onclick="getJsonData();showJsonData();">Get JSON</button>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</form>
+				<textarea id='listPanel' cols='80' rows='5'></textarea></br>
+			</div>
+
+			<hr>
+
+			
+
+		</div>
+		
+	</body>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="smartphone/js/jquery.min.js"></script>
+	<script type="text/javascript" src="smartphone/js/jquery.easing.1.3.js"></script>
+	<script src="mountable.js"></script>
+	<script>
+		
+		//A basic JSON example 
+			var jsonContentSimple =
+			[
+			    {
+			        "Time": "",
+			        "Position": "",
+			        "Session": ""
+			    }
+			];
+			/* <select name="Position[]" class="form-control">
+			<option value=""></option>
+			<option value="SCLobby">SCLobby</option>
+			<option value="SC121">SC121</option>
+			<option value="SC226">SC226</option>
+			<option value="SC120">SC120</option>
+			</select>
+			*/
+		var mapjson ;	
+		var y = document.getElementsByClassName("posSel");
+		var TPOS = [];
+		
+		$(document).ready(function(){
+			$.getJSON("https://www.googleapis.com/blogger/v3/blogs/4267204410839545163/pages/6783034841142667751?key=AIzaSyBmT4ZycIuDhq4Bk4aYQGuDynt6ib-u690",function(result){
+				mapjson = JSON.parse(result.content);
+				addTitlePOSs();
+				//alert(mapjson.Points.length);
+			});
+		});
+	
+		function ReadyToInput()
+		{
+
+			/* Activates the quick example */
+
+			$('#example1').mounTable(jsonContentSimple,
+			{
+				model: '.mountable-model',
+				
+								/* Options to your new line button */
+
+				addLine:
+				{
+
+					/* New line button selector */
+
+					button: "#button2",
+
+					/* Callback function */
+
+					onClick: function (element)
+					{
+						console.log('Line added!');
+						return true;
+						
+					},
+					//onClick:addOptions()
+				},
+
+				/* Options to your delete line button */
+
+				deleteLine:
+				{
+
+					/* Delete line button selector */
+
+					button: ".mountable-remove-line-2",
+
+					/* Callback function */
+
+					onClick: function ()
+					{
+						if (confirm("Are you sure?"))
+						{
+							console.log('Line removed!');
+							return true;
+						}
+					}
+
+				}
+			});
+
+		};
+		
+		var tableData = [];
+		
+		function getJsonData(){
+		tableData = [];
+		//alert(tableData.length);
+			var table = document.getElementById('example1');
+			for (var r = 1, n = table.rows.length; r < n-1; r++) {
+			tableData[r-1] = [];		
+				for (var c = 0, m = table.rows[r].cells.length; c < m-1; c++) {
+				//alert(r-1+","+c);
+					tableData[r-1][c] = table.rows[r].cells[c].children[0].value;
+					//alert(table.rows[r].cells[c].children[0].value);
+					//alert(table.rows[r].cells[c].innerHTML);
+				}
+			}
+			//alert(tableData);
+		}
+		
+		function showJsonData(){
+			//alert(TPOS.length);
+			document.getElementById("listPanel").value ="";
+			var part1 ='{"Sessions":[';
+				for(var i=0 ; i<tableData.length ; i++){
+					//alert(tableData[i][2]);
+					if(i == tableData.length-1){
+						var GJ ="{";
+						for(var j=0 ; j<TPOS.length ; j++){
+							if(j!=TPOS.length-1){
+								GJ += '"'+TPOS[j]+'":"'+tableData[i][j]+'",'
+							}else{
+								GJ += '"'+TPOS[j]+'":"'+tableData[i][j]+'"}]}'
+							}
+						}
+						part1 += GJ;//'{"Time":"'+tableData[i][0]+'","Position":"'+tableData[i][1]+'","Session":"'+tableData[i][2]+'"}]}';
+					}else{
+						var GJ ="{";
+						for(var j=0 ; j<TPOS.length ; j++){
+							if(j!=TPOS.length-1){
+								GJ += '"'+TPOS[j]+'":"'+tableData[i][j]+'",'
+							}else{
+								GJ += '"'+TPOS[j]+'":"'+tableData[i][j]+'"},'
+							}
+						}
+						part1 += GJ;//'{"Time":"'+tableData[i][0]+'","Position":"'+tableData[i][1]+'","Session":"'+tableData[i][2]+'"},';
+					}
+				}
+			document.getElementById("listPanel").value += part1;
+		}
+		
+		function addTitlePOSs(){
+			TPOS[0] = "Time";
+			for(var i=0 ; i < mapjson.Points.length ; i++){	
+				if(mapjson.Points[i].Beacon==""){
+					document.getElementById("tableHead").innerHTML += '<th>'+mapjson.Points[i].Position+'</th>';
+					document.getElementById("tableBody").innerHTML += '<td><input type="text" name="Session[]" class="form-control"></td>';
+					TPOS[TPOS.length] = mapjson.Points[i].Position;
+				}
+			}
+			document.getElementById("tableBody").innerHTML += '<td><button type="button" class="btn btn-default mountable-remove-line-2">Remove</button></td>';
+			document.getElementById("tableBody").className = "mountable-model";
+			ReadyToInput();
+		}
+		
+	function aaa(){
+	alert("123");
+	}
+	</script>
+
+</html>

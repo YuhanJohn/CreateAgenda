@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+		<title>mountable.js</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<style>
+			.table {margin-bottom: 0;}
+		</style>
+
+	</head>
+
+	<body>
+
+		<div class="container">
+
+			<h1>mountable.js</h1>
+			<p class="lead">An easier way to pass JSON content into a HTML table using jQuery</p>
+
+			<hr>
+
+			<!-- Example table two -->
+
+			<h3>A quite simple example</h3>
+			<h4>The JSON file</h4>
+
+<pre>
+var jsonContentSimple =
+[
+    {
+        "first_name": "John",
+        "last_name": "Appleseed",
+        "email": "john@appleseed.com"
+    },
+    {
+    	"first_name": "João",
+    	"last_name": "Canabrava",
+    	"email": "joao@canabrava.com"
+    },
+    {
+        "first_name": "Patrick",
+        "last_name": "Grapeseed",
+        "email": "patrick@grapeseed.com"
+    },
+    {
+    	"first_name": "Xingling",
+    	"last_name": "Ping Pong",
+    	"email": "xingling@pingpong.com"
+    }
+];</pre>
+
+			<h4>The result</h4>
+			<div class="well">
+				<form action="#">
+					<table class="table" id="example1">
+						<thead>
+							<tr>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>Email</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="mountable-model">
+								<td><input type="text" name="first_name[]" class="form-control"></td>
+								<td><input type="text" name="last_name[]" class="form-control"></td>
+								<td><input type="text" name="email[]" class="form-control"></td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+
+			<hr>
+
+			<!-- Example table two -->
+
+			<h3>Example two: a bit more complex</h3>
+			<h4>The JSON file</h4>
+<pre>
+var jsonContentComplex =
+[
+    {
+        "number": 1,
+        "first_name": "John",
+        "last_name": "Appleseed",
+        "email": "john@appleseed.com",
+        "sex": "Male",
+        "techniques":
+        [
+        	"Can vanish",
+        	"Is strong",
+        	"Like Apples"
+        ],
+        "location": "United States"
+    },
+    {
+    	"number": 1,
+    	"first_name": "João",
+    	"last_name": "Canabrava",
+    	"email": "joao@canabrava.com",
+    	"sex": "Male",
+    	"techniques":
+    	[
+    		"Is always drunk",
+    		"Stronger liver",
+    		"Caipirinha adept"
+    	],
+    	"location": "Brazil"
+    },
+    {
+        "number": 3,
+        "first_name": "Patrick",
+        "last_name": "Grapeseed",
+        "email": "patrick@grapeseed.com",
+        "sex": "Male",
+        "techniques":
+        [
+        	"Hates grapes",
+        	"It has a grape head"
+        ],
+        "location": "United Kingdom"
+    },
+    {
+    	"number": 4,
+    	"first_name": "Xingling",
+    	"last_name": "Ping Pong",
+    	"email": "xingling@pingpong.com",
+    	"sex": "Female",
+    	"techniques":
+    	[
+    		"Works at AliExpress",
+    		"Slavery adept"
+    	],
+    	"location": "China"
+    }
+];</pre>
+			<h4>The result</h4>
+			<div class="well">
+				<form action="#">
+					<table class="table" id="example2">
+						<thead>
+							<tr>
+								<th style="width: 10%;">#</th>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>Techniques</th>
+								<th>Email</th>
+								<th>Sex</th>
+								<th>Location</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="mountable-model">
+								<td><input type="text" name="number[]" class="form-control"></td>
+								<td><input type="text" name="first_name[]" class="form-control"></td>
+								<td><input type="text" name="last_name[]" class="form-control"></td>
+								<td>
+									<select name="techniques[]" class="form-control">
+										<option value=""></option>
+									</select>
+								</td>
+								<td><input type="text" name="email[]" class="form-control"></td>
+								<td nowrap="nowrap" style="vertical-align: middle;">
+									<input type="checkbox" name="sex[]" value="Male"> M
+									<input type="checkbox" name="sex[]" value="Female"> F
+								</td>
+								<td>
+									<select name="location[]" class="form-control">
+										<option value=""></option>
+										<option value="Brazil">Brazil</option>
+										<option value="Canada">Canada</option>
+										<option value="China">China</option>
+										<option value="United Kingdom">United Kingdom</option>
+										<option value="United States">United States</option>
+									</select>
+								</td>
+								<td><button type="button" class="btn btn-default mountable-remove-line-2">Remove</button></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3"><button type="button" class="btn btn-default" id="button2">Add a new line</button></td>
+							</tr>
+						</tfoot>
+					</table>
+				</form>
+			</div>
+
+			<p>Like it? <a href="https://github.com/guimadaleno/mountable" target="_blank">Give it a star</a>.</p>
+
+		</div>
+
+	</body>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="mountable.js"></script>
+	<script>
+
+		$(document).ready(function()
+		{
+
+			/* A basic JSON example */
+
+			var jsonContentSimple =
+			[
+			    {
+			        "first_name": "John",
+			        "last_name": "Appleseed",
+			        "email": "john@appleseed.com"
+			    },
+			    {
+			    	"first_name": "João",
+			    	"last_name": "Canabrava",
+			    	"email": "joao@canabrava.com"
+			    },
+			    {
+			        "first_name": "Patrick",
+			        "last_name": "Grapeseed",
+			        "email": "patrick@grapeseed.com"
+			    },
+			    {
+			    	"first_name": "Xingling",
+			    	"last_name": "Ping Pong",
+			    	"email": "xingling@pingpong.com"
+			    }
+			];
+
+			/* A complex JSON example */
+
+			var jsonContentComplex =
+			[
+			    {
+			        "number": 1,
+			        "first_name": "John",
+			        "last_name": "Appleseed",
+			        "email": "john@appleseed.com",
+			        "sex": "Male",
+			        "techniques":
+			        [
+			        	"Can vanish",
+			        	"Is strong",
+			        	"Like Apples"
+			        ],
+			        "location": "United States"
+			    },
+			    {
+			    	"number": 1,
+			    	"first_name": "João",
+			    	"last_name": "Canabrava",
+			    	"email": "joao@canabrava.com",
+			    	"sex": "Male",
+			    	"techniques":
+			    	[
+			    		"Is always drunk",
+			    		"Stronger liver",
+			    		"Caipirinha adept"
+			    	],
+			    	"location": "Brazil"
+			    },
+			    {
+			        "number": 3,
+			        "first_name": "Patrick",
+			        "last_name": "Grapeseed",
+			        "email": "patrick@grapeseed.com",
+			        "sex": "Male",
+			        "techniques":
+			        [
+			        	"Hates grapes",
+			        	"It has a grape head"
+			        ],
+			        "location": "United Kingdom"
+			    },
+			    {
+			    	"number": 4,
+			    	"first_name": "Xingling",
+			    	"last_name": "Ping Pong",
+			    	"email": "xingling@pingpong.com",
+			    	"sex": "Female",
+			    	"techniques":
+			    	[
+			    		"Works at AliExpress",
+			    		"Slavery adept"
+			    	],
+			    	"location": "China"
+			    }
+			];
+
+			/* Activates the quick example */
+
+			$('#example1').mounTable(jsonContentSimple,
+			{
+				model: '.mountable-model'
+			});
+
+			/* Activates the complete example */
+
+			$('#example2').mounTable(jsonContentComplex,
+			{
+
+				/* The model class */
+
+				model: '.mountable-model',
+
+				/* No console messages */
+
+				noDebug: false,
+
+				/* Options to your new line button */
+
+				addLine:
+				{
+
+					/* New line button selector */
+
+					button: "#button2",
+
+					/* Callback function */
+
+					onClick: function (element)
+					{
+						console.log('Line added!');
+						return true;
+					}
+				},
+
+				/* Options to your delete line button */
+
+				deleteLine:
+				{
+
+					/* Delete line button selector */
+
+					button: ".mountable-remove-line-2",
+
+					/* Callback function */
+
+					onClick: function ()
+					{
+						if (confirm("Are you sure?"))
+						{
+							console.log('Line removed!');
+							return true;
+						}
+					}
+
+				}
+
+			});
+
+		});
+
+	</script>
+
+</html>

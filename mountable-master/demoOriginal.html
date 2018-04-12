@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+		<title>mountable.js</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<style>
+			.table {margin-bottom: 0;}
+		</style>
+
+	</head>
+
+	<body>
+
+		<div class="container">
+
+			<h1>請建立會議議程</h1>
+			
+
+			<hr>
+			<h2>點選Get JSON以產生JSON格式資料</h2>
+			<!-- Example table two -->
+
+			<div class="well">
+				<form action="#">
+					<table class="table" id="example1">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Position</th>
+								<th>Session</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="mountable-model">
+								<td><input type="text" name="Time[]" class="form-control"></td>
+								<td> <select name="Position[]" class="form-control">
+			<option value=""></option>
+			<option value="SCLobby">SCLobby</option>
+			<option value="SC121">SC121</option>
+			<option value="SC226">SC226</option>
+			<option value="SC120">SC120</option>
+			</select></td>
+								<td><input type="text" name="Session[]" class="form-control"></td>
+								<td><button type="button" class="btn btn-default mountable-remove-line-2">Remove</button></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3">
+								<button type="button" class="btn btn-default" id="button2" onclick="">Add a new line</button>
+								<button type="button" class="btn btn-default" onclick="getJsonData();showJsonData();">Get JSON</button>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</form>
+				<textarea id='listPanel' cols='80' rows='5'></textarea></br>
+			</div>
+
+			<hr>
+
+			
+
+		</div>
+		
+	</body>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="smartphone/js/jquery.min.js"></script>
+	<script type="text/javascript" src="smartphone/js/jquery.easing.1.3.js"></script>
+	<script src="mountable.js"></script>
+	<script>
+
+		//A basic JSON example 
+			var jsonContentSimple =
+			[
+			    {
+			        "Time": "",
+			        "Position": "",
+			        "Session": ""
+			    }
+			];
+			/* <select name="Position[]" class="form-control">
+			<option value=""></option>
+			<option value="SCLobby">SCLobby</option>
+			<option value="SC121">SC121</option>
+			<option value="SC226">SC226</option>
+			<option value="SC120">SC120</option>
+			</select>
+			*/
+		var mapjson ;	
+		var y = document.getElementsByClassName("posSel");
+		
+	
+		$(document).ready(function()
+		{
+
+			/* Activates the quick example */
+
+			$('#example1').mounTable(jsonContentSimple,
+			{
+				model: '.mountable-model',
+				
+								/* Options to your new line button */
+
+				addLine:
+				{
+
+					/* New line button selector */
+
+					button: "#button2",
+
+					/* Callback function */
+
+					onClick: function (element)
+					{
+						console.log('Line added!');
+						return true;
+						
+					},
+					//onClick:addOptions()
+				},
+
+				/* Options to your delete line button */
+
+				deleteLine:
+				{
+
+					/* Delete line button selector */
+
+					button: ".mountable-remove-line-2",
+
+					/* Callback function */
+
+					onClick: function ()
+					{
+						if (confirm("Are you sure?"))
+						{
+							console.log('Line removed!');
+							return true;
+						}
+					}
+
+				}
+			});
+
+		});
+		
+		var tableData = [];
+		
+		function getJsonData(){
+		tableData = [];
+		//alert(tableData.length);
+			var table = document.getElementById('example1');
+			for (var r = 1, n = table.rows.length; r < n-1; r++) {
+			tableData[r-1] = [];		
+				for (var c = 0, m = table.rows[r].cells.length; c < m-1; c++) {
+				//alert(r-1+","+c);
+					tableData[r-1][c] = table.rows[r].cells[c].children[0].value;
+					//alert(table.rows[r].cells[c].children[0].value);
+					//alert(table.rows[r].cells[c].innerHTML);
+				}
+			}
+			//alert(tableData);
+		}
+		
+		function showJsonData(){
+			document.getElementById("listPanel").value ="";
+			var part1 ='{"Sessions":[';
+				for(var i=0 ; i<tableData.length ; i++){
+					//alert(tableData[i][2]);
+					if(i == tableData.length-1){
+						part1 += '{"Time":"'+tableData[i][0]+'","Position":"'+tableData[i][1]+'","Session":"'+tableData[i][2]+'"}]}';
+					}else{
+						part1 += '{"Time":"'+tableData[i][0]+'","Position":"'+tableData[i][1]+'","Session":"'+tableData[i][2]+'"},';
+					}
+				}
+			document.getElementById("listPanel").value += part1;
+		}
+		
+
+	
+	function aaa(){
+	alert("123");
+	}
+	</script>
+
+</html>

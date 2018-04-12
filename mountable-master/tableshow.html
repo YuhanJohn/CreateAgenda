@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  border: 1px solid #666;   
+    width: 100%;
+}
+th {
+  background: #f8f8f8; 
+  font-weight: bold;    
+    padding: 2px;
+}
+</style>
+<script type="text/javascript" src="smartphone/js/jquery.min.js"></script>
+<script type="text/javascript" src="smartphone/js/jquery.easing.1.3.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+/*
+$.ajax({
+    url: 'tableshow.html',
+    type: "post",
+    dataType: "json",
+    data: {
+        json: JSON.stringify([
+{"Time":"8:00","Position":"SCLobby","Session":"報到"},{"Time":"9:00","Position":"SC121","Session":"開幕式"},{"Time":"10:00","Position":"SC226","Session":"論文發表"},{"Time":"11:00","Position":"SC120","Session":"論文發表"}
+]),
+        delay: 1
+    },
+    success: function(data, textStatus, jqXHR) {
+        // since we are using jQuery, you don't need to parse response
+        drawTable(data);
+    }
+});*/
+/*
+{"Sessions":[
+{"Time":"8:00","Position":"SCLobby","Session":"報到"},
+{"Time":"9:00","Position":"SC121","Session":"開幕式"},
+{"Time":"10:00","Position":"SC226","Session":"論文發表"},
+{"Time":"11:00","Position":"SC120","Session":"論文發表"},
+{"Time":"12:00","Position":"SC112","Session":"用餐"}]}*/
+var MapKey = [];
+$(document).ready(function(){
+    $.getJSON("https://www.googleapis.com/blogger/v3/blogs/4267204410839545163/pages/3243652926394610415?key=AIzaSyBmT4ZycIuDhq4Bk4aYQGuDynt6ib-u690",function(result){
+		tablejson = JSON.parse(result.content);
+		//alert(tablejson.Sessions[0].lat);
+		/*for(var i=0 ; i < tablejson.Sessions.length ; i++){	
+			alert(tablejson.Sessions[i].Time+","+tablejson.Sessions[i].Position+","+tablejson.Sessions[i].Session);
+		}*/
+		var a = 0;
+		drawTable(tablejson.Sessions);
+		for(key in tablejson.Sessions[0]){
+			//console.log("Key: " + key);
+			//console.log("Value: " + tablejson.Sessions[0][key]);
+			MapKey[a] = key;
+			document.getElementById("TableTitle").innerHTML += '<th onclick="ToMap('+"MapKey["+a+"]"+');">'+key+'</th>';
+			a++;
+			//alert(a);
+		}
+    });
+});
+
+function drawTable(data) {
+    for (var i = 0; i < data.length; i++) {
+        drawRow(data[i],i);
+    }
+}
+
+function drawRow(rowData,n) {
+    var row = $("<tr />")
+    $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+    /*row.append($("<td>" + rowData.Time + "</td>"));
+    row.append($("<td>" + rowData.SC121 + "</td>"));
+    row.append($("<td>" + rowData.SC112 + "</td>"));
+	row.append($("<td>" + rowData.SC113 + "</td>"));*/
+		var b = 0;
+		for(key in tablejson.Sessions[n]){
+			row.append($("<td onclick='ToMap("+'MapKey['+b+']'+");'>" + tablejson.Sessions[n][key] + "</td>"));
+			b++;
+		}
+}
+
+
+function showTable(){
+			var table = document.getElementById('personDataTable');
+			document.getElementById('sss').innerHTML += "&lt;table&gt;</br>";
+			for (var r = 0, n = table.rows.length; r < n; r++) {
+				document.getElementById('sss').innerHTML += "&lt;tr&gt;</br>";
+				for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
+					document.getElementById('sss').innerHTML += "&lt;td&gt;"+table.rows[r].cells[c].innerHTML+"&lt;/td&gt;</br>";
+					//console.log(table.rows[r].cells[c].innerHTML);
+				}
+				document.getElementById('sss').innerHTML += "&lt;/tr&gt;</br>";
+			}
+			document.getElementById('sss').innerHTML += "&lt;/table&gt;";
+			//alert(tableData);
+		}
+		
+function ToMap(n){
+	document.getElementById('sss').innerHTML += n;
+	//alert(n);
+}		
+</script>
+</head>
+<body>
+<table id="personDataTable">
+    <tr id="TableTitle">
+    </tr>
+</table>
+<button type="button" onclick="showTable();">Table</button>
+<pre id="sss">
+</pre>
+</body>
+</html>
